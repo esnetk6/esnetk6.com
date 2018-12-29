@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html lang="ja" itemscope itemtype="http://schema.org/WebPage">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title itemprop="name">WP-CLIをマルチサイト上の別ブログで使う - esnetk6.com</title>
+	
+	<meta property="og:title" content="WP-CLIをマルチサイト上の別ブログで使う">
+	
+	
+	
+	<meta name="description" content="マルチサイト上のメインサイトとは別のブログでWP-CLIコマンドを使う方法。マルチサイトを作成するコマンドではありません。">
+	
+	
+	<meta property="og:site_name" content="esnetk6.com">
+	<meta property="og:locale" content="ja_JP">
+	
+	<meta property="og:url" content="https://esnetk6.com/2017/08/wp-cli-run-command-on-multisite/">
+	<meta itemprop="url" content="https://esnetk6.com/2017/08/wp-cli-run-command-on-multisite/">
+	<link rel="canonical" href="https://esnetk6.com/2017/08/wp-cli-run-command-on-multisite/">
+	
+	
+	<meta property="og:type" content="article">
+	
+	
+	
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="/atom.xml">
+	
+	<link rel="stylesheet" href="/css/style.min.css">
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-KQS6BKM');</script>
+	<!-- End Google Tag Manager -->
+</head>
+
+
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="l-container">
+<header role="banner" class="p-header">
+	<p class="p-header__logo">
+		<a href="/" rel="home">esnetk6.com</a>
+	</p>
+</header>
+
+<main role="main">
+	<article class="p-article" itemscope="" itemtype="http://schema.org/Article">
+		<h1 class="p-article__title" itemprop="headline name">WP-CLIをマルチサイト上の別ブログで使う</h1>
+		
+			<footer class="p-article-meta">
+
+	<p class="p-article-meta__date p-meta-date">
+		<time datetime="2017-08-01T21:40:00.000Z" itemprop="datePublished">
+			2017-08-02
+		</time>
+	</p>
+
+	
+	<ul class="p-article-meta__tag">
+		
+		
+		<li><a href="/tags/wordpress/">wordpress</a></li>
+		
+		<li><a href="/tags/wp-cli/">wp-cli</a></li>
+		
+	</ul>
+	
+	
+		<meta itemprop="url" content="https://esnetk6.com/2017/08/wp-cli-run-command-on-multisite/">
+	
+</footer>
+		
+		<div class="p-article__body" itemprop="articleBody">
+			<p>マルチサイト上のメインサイトとは別のブログでWP-CLIコマンドを使う方法。<br>マルチサイトを作成するコマンドではありません。</p>
+<h2 id="マルチサイトの例"><a href="#マルチサイトの例" class="headerlink" title="マルチサイトの例"></a>マルチサイトの例</h2><p>以下のようにマルチサイト（サブディレクトリ型）を作っていたとして、<br>普通にWP-CLIコマンドを使ってもメインのサイト（1つ目）の方でしか動作しません。</p>
+<ul>
+<li><a href="http://wocker.dev/" target="_blank" rel="noopener">http://wocker.dev/</a></li>
+<li><a href="http://wocker.dev/test/" target="_blank" rel="noopener">http://wocker.dev/test/</a>　←こっちで使いたい</li>
+</ul>
+<h2 id="“url”-オプションを使う"><a href="#“url”-オプションを使う" class="headerlink" title="“url” オプションを使う"></a>“url” オプションを使う</h2><p><code>--url=&lt;url&gt;</code> で指定のサイト上でコマンドが使えます。これだけです。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post create --url=<span class="string">"wocker.dev/test/"</span> --post_title=<span class="string">"test"</span></span><br></pre></td></tr></table></figure>
+<h2 id="URL直接ではなくブログIDの指定でコマンドを叩く"><a href="#URL直接ではなくブログIDの指定でコマンドを叩く" class="headerlink" title="URL直接ではなくブログIDの指定でコマンドを叩く"></a>URL直接ではなくブログIDの指定でコマンドを叩く</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post create --url=$(wp site url 2) --post_title=<span class="string">"test"</span></span><br></pre></td></tr></table></figure>
+<p><code>--url=$(wp site url 2)</code> が何なのかは以下で説明。</p>
+<h2 id="“wp-site”-でブログ情報を取得"><a href="#“wp-site”-でブログ情報を取得" class="headerlink" title="“wp site” でブログ情報を取得"></a>“wp site” でブログ情報を取得</h2><p><code>wp site list</code> で、ネットワーク上のブログ一覧が表示されます。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ wp site list</span><br><span class="line">blog_id	url	last_updated	registered</span><br><span class="line">1	http://wocker.dev/	2017-07-04 10:29:08	2017-05-08 22:01:25</span><br><span class="line">2	http://wocker.dev/<span class="built_in">test</span>/	2017-07-04 10:36:25	2017-05-08 22:07:17</span><br></pre></td></tr></table></figure>
+<p><code>wp site url</code> で、ブログIDからURLを取得。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wp site url 2</span><br><span class="line">http://wocker.dev/<span class="built_in">test</span>/</span><br></pre></td></tr></table></figure>
+
+		</div>
+	</article>
+	<nav class="c-pagination" role="navigation">
+	<ul class="c-pagination-list">
+		
+		<li class="c-pagination-list__item c-pagination-list__item--prev">
+			<span>Newer Entry</span>
+			<a href="/2017/10/bitbucket-pipelines-ftp-deployment/">
+			BitbucketからFTPサーバーにデプロイ
+		</a></li>
+		
+		
+		<li class="c-pagination-list__item c-pagination-list__item--next">
+			<span>Older Entry</span>
+			<a class="older-posts" href="/2017/08/wp-cli-set-page-template/">
+			WP-CLIで固定ページのテンプレートを指定する
+		</a></li>
+		
+	</ul>
+</nav>
+</main>
+
+<footer role="contentinfo" class="p-footer">
+	<div class="p-footer__links">
+		<ul>
+			<li><a href="/" rel="home">Home</a></li>
+			
+			
+			<li><a href="/atom.xml">RSS</a></li>
+			
+		</ul>
+	</div>
+</footer>
+</div>
+</body>
+</html>

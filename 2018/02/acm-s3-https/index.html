@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="ja" itemscope itemtype="http://schema.org/WebPage">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title itemprop="name">CloudFront + ACMでブログをHTTPS化した - esnetk6.com</title>
+	
+	<meta property="og:title" content="CloudFront + ACMでブログをHTTPS化した">
+	
+	
+	
+	<meta name="description" content="Hexo + S3で動いているブログをHTTPS化しました。">
+	
+	
+	<meta property="og:site_name" content="esnetk6.com">
+	<meta property="og:locale" content="ja_JP">
+	
+	<meta property="og:url" content="https://esnetk6.com/2018/02/acm-s3-https/">
+	<meta itemprop="url" content="https://esnetk6.com/2018/02/acm-s3-https/">
+	<link rel="canonical" href="https://esnetk6.com/2018/02/acm-s3-https/">
+	
+	
+	<meta property="og:type" content="article">
+	
+	
+	
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="/atom.xml">
+	
+	<link rel="stylesheet" href="/css/style.min.css">
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-KQS6BKM');</script>
+	<!-- End Google Tag Manager -->
+</head>
+
+
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="l-container">
+<header role="banner" class="p-header">
+	<p class="p-header__logo">
+		<a href="/" rel="home">esnetk6.com</a>
+	</p>
+</header>
+
+<main role="main">
+	<article class="p-article" itemscope="" itemtype="http://schema.org/Article">
+		<h1 class="p-article__title" itemprop="headline name">CloudFront + ACMでブログをHTTPS化した</h1>
+		
+			<footer class="p-article-meta">
+
+	<p class="p-article-meta__date p-meta-date">
+		<time datetime="2018-02-14T15:00:00.000Z" itemprop="datePublished">
+			2018-02-15
+		</time>
+	</p>
+
+	
+	<ul class="p-article-meta__tag">
+		
+		
+		<li><a href="/tags/aws/">aws</a></li>
+		
+	</ul>
+	
+	
+		<meta itemprop="url" content="https://esnetk6.com/2018/02/acm-s3-https/">
+	
+</footer>
+		
+		<div class="p-article__body" itemprop="articleBody">
+			<p>Hexo + S3で動いているブログをHTTPS化しました。</p>
+<p>ACMを使うにあたって申請ドメインでメールを受信できるようにしなければならないと聞いて面倒に感じていたんですが、SESでメールも受信できて無事完了しました。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>これらの記事のおかげで設定できました。<br>本当にありがとうございます。</p>
+<ul>
+<li><a href="https://qiita.com/toshihirock/items/914f408cd565b66fe9f9" target="_blank" rel="noopener">S3+CloudFront+ACM(AWS Certificate Manager)でHTTPS静的サイトを作ってみた - Qiita</a></li>
+<li><a href="https://qiita.com/toshihirock/items/cf4e6d8afa08beaa728c" target="_blank" rel="noopener">AWS Certificate Manager (ACM)で申請前に事前に確認しておくべき大切なこと - Qiita</a></li>
+<li><a href="https://dev.classmethod.jp/cloud/aws/cloudfront-s3-origin-access-identity/" target="_blank" rel="noopener">[CloudFront + S3]特定バケットに特定ディストリビューションのみからアクセスできるよう設定する ｜ Developers.IO</a></li>
+<li><a href="https://dev.classmethod.jp/cloud/aws/acm-cloudfront-ssl/" target="_blank" rel="noopener">[ACM] AWS Certificate Manager 無料のサーバ証明書でCloudFrontをHTTPS化してみた ｜ Developers.IO</a></li>
+<li><a href="https://blog.majimena.co.jp/tech/2016/03/31/aws-ssl.html" target="_blank" rel="noopener">Amazon S3でSSL対応の静的ウェブサイトを公開する | マジメナラボ - majimena Inc.</a></li>
+<li><a href="http://blog.serverworks.co.jp/tech/2016/06/30/acm-auth-method/" target="_blank" rel="noopener">【そんなときどうする？】メールサーバはないけれどACMを使いたい！ &#8211; サーバーワークスエンジニアブログ</a></li>
+<li><a href="https://thetimegraphy.com/aws-amazon-certificate-manager-tokyo-region-does-not-support-cloudfront/" target="_blank" rel="noopener">Amazon Certificate ManagerのTokyo RegionでSSL取得してもCloudFrontでは表示されない | Timegraphy</a></li>
+</ul>
+
+		</div>
+	</article>
+	<nav class="c-pagination" role="navigation">
+	<ul class="c-pagination-list">
+		
+		<li class="c-pagination-list__item c-pagination-list__item--prev">
+			<span>Newer Entry</span>
+			<a href="/2018/04/circle-ci-deployment/">
+			Circle CIでwebサイトを自動デプロイ
+		</a></li>
+		
+		
+		<li class="c-pagination-list__item c-pagination-list__item--next">
+			<span>Older Entry</span>
+			<a class="older-posts" href="/2017/10/bitbucket-pipelines-ftp-deployment/">
+			BitbucketからFTPサーバーにデプロイ
+		</a></li>
+		
+	</ul>
+</nav>
+</main>
+
+<footer role="contentinfo" class="p-footer">
+	<div class="p-footer__links">
+		<ul>
+			<li><a href="/" rel="home">Home</a></li>
+			
+			
+			<li><a href="/atom.xml">RSS</a></li>
+			
+		</ul>
+	</div>
+</footer>
+</div>
+</body>
+</html>

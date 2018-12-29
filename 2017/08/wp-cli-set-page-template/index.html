@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html lang="ja" itemscope itemtype="http://schema.org/WebPage">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title itemprop="name">WP-CLIで固定ページのテンプレートを指定する - esnetk6.com</title>
+	
+	<meta property="og:title" content="WP-CLIで固定ページのテンプレートを指定する">
+	
+	
+	
+	<meta name="description" content="WP-CLIで固定ページのテンプレートを指定するときは、wp post コマンドのオプションで --page_template=&quot;template-sample.php&quot; のようにファイル名を指定します。">
+	
+	
+	<meta property="og:site_name" content="esnetk6.com">
+	<meta property="og:locale" content="ja_JP">
+	
+	<meta property="og:url" content="https://esnetk6.com/2017/08/wp-cli-set-page-template/">
+	<meta itemprop="url" content="https://esnetk6.com/2017/08/wp-cli-set-page-template/">
+	<link rel="canonical" href="https://esnetk6.com/2017/08/wp-cli-set-page-template/">
+	
+	
+	<meta property="og:type" content="article">
+	
+	
+	
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="/atom.xml">
+	
+	<link rel="stylesheet" href="/css/style.min.css">
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-KQS6BKM');</script>
+	<!-- End Google Tag Manager -->
+</head>
+
+
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="l-container">
+<header role="banner" class="p-header">
+	<p class="p-header__logo">
+		<a href="/" rel="home">esnetk6.com</a>
+	</p>
+</header>
+
+<main role="main">
+	<article class="p-article" itemscope="" itemtype="http://schema.org/Article">
+		<h1 class="p-article__title" itemprop="headline name">WP-CLIで固定ページのテンプレートを指定する</h1>
+		
+			<footer class="p-article-meta">
+
+	<p class="p-article-meta__date p-meta-date">
+		<time datetime="2017-08-01T05:30:00.000Z" itemprop="datePublished">
+			2017-08-01
+		</time>
+	</p>
+
+	
+	<ul class="p-article-meta__tag">
+		
+		
+		<li><a href="/tags/wordpress/">wordpress</a></li>
+		
+		<li><a href="/tags/wp-cli/">wp-cli</a></li>
+		
+	</ul>
+	
+	
+		<meta itemprop="url" content="https://esnetk6.com/2017/08/wp-cli-set-page-template/">
+	
+</footer>
+		
+		<div class="p-article__body" itemprop="articleBody">
+			<p><img src="/2017/08/wp-cli-set-page-template/screenshot1.png" alt=""></p>
+<p><code>wp post</code> コマンドのオプションで <code>--page_template=&quot;template-sample.php&quot;</code> のようにファイル名を指定します。</p>
+<h2 id="ページの新規作成と同時にテンプレートを指定する場合"><a href="#ページの新規作成と同時にテンプレートを指定する場合" class="headerlink" title="ページの新規作成と同時にテンプレートを指定する場合"></a>ページの新規作成と同時にテンプレートを指定する場合</h2><ul>
+<li><a href="https://developer.wordpress.org/cli/commands/post/create/" target="_blank" rel="noopener">wp post create</a></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post create --post_type=<span class="string">"page"</span> --page_template=<span class="string">"template-sample.php"</span></span><br></pre></td></tr></table></figure>
+<h2 id="作成済みのページのテンプレートを変更する場合"><a href="#作成済みのページのテンプレートを変更する場合" class="headerlink" title="作成済みのページのテンプレートを変更する場合"></a>作成済みのページのテンプレートを変更する場合</h2><ul>
+<li><a href="https://developer.wordpress.org/cli/commands/post/update/" target="_blank" rel="noopener">wp post update</a></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post update 123 --page_template=<span class="string">"template-sample.php"</span></span><br></pre></td></tr></table></figure>
+<p>デフォルトテンプレートに戻したいときは “page.php” ではなく “default”。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post update 123 --page_template=<span class="string">"default"</span></span><br></pre></td></tr></table></figure>
+<h2 id="テンプレートが指定されたページ一覧を取得する"><a href="#テンプレートが指定されたページ一覧を取得する" class="headerlink" title="テンプレートが指定されたページ一覧を取得する"></a>テンプレートが指定されたページ一覧を取得する</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post list --post_type=<span class="string">"page"</span> --meta_value=<span class="string">"template-sample.php"</span> --meta_key=<span class="string">"_wp_page_template"</span></span><br></pre></td></tr></table></figure>
+<h3 id="デフォルトテンプレートのページ一覧を取得する"><a href="#デフォルトテンプレートのページ一覧を取得する" class="headerlink" title="デフォルトテンプレートのページ一覧を取得する"></a>デフォルトテンプレートのページ一覧を取得する</h3><p><code>--meta_value=&quot;default&quot;</code> に変更。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post list --post_type=<span class="string">"page"</span> --meta_value=<span class="string">"default"</span> --meta_key=<span class="string">"_wp_page_template"</span></span><br></pre></td></tr></table></figure>
+<p>ただし、WP-CLIで作成したページは <code>--page_template</code> を指定しなかった場合、 <code>meta_key=&quot;_wp_page_template&quot;</code> および <code>meta_value</code> がセットされないようです。</p>
+<p>そのため上記のコマンドでデフォルトテンプレートのページを取得したいとき、あるいはテーマ側で <code>get_posts</code> 等を使ってデフォルトテンプレートのページを表示させたいとき（あるかわからないけど）に、正しく記事を取得できなくなる恐れがあります。</p>
+<p><code>wp post create --page_template=&quot;default&quot;</code> で常に作っておくと安心かもしれません。</p>
+<h2 id="あるテンプレートの記事をすべて別のものに変更する"><a href="#あるテンプレートの記事をすべて別のものに変更する" class="headerlink" title="あるテンプレートの記事をすべて別のものに変更する"></a>あるテンプレートの記事をすべて別のものに変更する</h2><p>たとえば “sample1.php” の記事をすべて “sample2.php” に変更したいというとき。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wp post update $(wp post list --post_type=<span class="string">"page"</span> --format=<span class="string">"ids"</span> --meta_value=<span class="string">"sample1.php"</span> --meta_key=<span class="string">"_wp_page_template"</span>) --page_template=<span class="string">"sample2.php"</span></span><br></pre></td></tr></table></figure>
+		</div>
+	</article>
+	<nav class="c-pagination" role="navigation">
+	<ul class="c-pagination-list">
+		
+		<li class="c-pagination-list__item c-pagination-list__item--prev">
+			<span>Newer Entry</span>
+			<a href="/2017/08/wp-cli-run-command-on-multisite/">
+			WP-CLIをマルチサイト上の別ブログで使う
+		</a></li>
+		
+		
+		<li class="c-pagination-list__item c-pagination-list__item--next">
+			<span>Older Entry</span>
+			<a class="older-posts" href="/2017/04/wp-cli-create-sub-page/">
+			WP-CLIで親を指定して固定ページを作る
+		</a></li>
+		
+	</ul>
+</nav>
+</main>
+
+<footer role="contentinfo" class="p-footer">
+	<div class="p-footer__links">
+		<ul>
+			<li><a href="/" rel="home">Home</a></li>
+			
+			
+			<li><a href="/atom.xml">RSS</a></li>
+			
+		</ul>
+	</div>
+</footer>
+</div>
+</body>
+</html>

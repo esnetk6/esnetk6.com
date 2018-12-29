@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html lang="ja" itemscope itemtype="http://schema.org/WebPage">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title itemprop="name">Circle CIでwebサイトを自動デプロイ - esnetk6.com</title>
+	
+	<meta property="og:title" content="Circle CIでwebサイトを自動デプロイ">
+	
+	
+	
+	<meta name="description" content="Circle CI 2.0を使って、GitHub or BitbucketからWebサイトを自動デプロイさせます。masterブランチは本番サーバーへ、developブランチはテストサーバーへ分けてデプロイさせるといったことも可能です。">
+	
+	
+	<meta property="og:site_name" content="esnetk6.com">
+	<meta property="og:locale" content="ja_JP">
+	
+	<meta property="og:url" content="https://esnetk6.com/2018/04/circle-ci-deployment/">
+	<meta itemprop="url" content="https://esnetk6.com/2018/04/circle-ci-deployment/">
+	<link rel="canonical" href="https://esnetk6.com/2018/04/circle-ci-deployment/">
+	
+	
+	<meta property="og:type" content="article">
+	
+	
+	
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="/atom.xml">
+	
+	<link rel="stylesheet" href="/css/style.min.css">
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-KQS6BKM');</script>
+	<!-- End Google Tag Manager -->
+</head>
+
+
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="l-container">
+<header role="banner" class="p-header">
+	<p class="p-header__logo">
+		<a href="/" rel="home">esnetk6.com</a>
+	</p>
+</header>
+
+<main role="main">
+	<article class="p-article" itemscope="" itemtype="http://schema.org/Article">
+		<h1 class="p-article__title" itemprop="headline name">Circle CIでwebサイトを自動デプロイ</h1>
+		
+			<footer class="p-article-meta">
+
+	<p class="p-article-meta__date p-meta-date">
+		<time datetime="2018-04-02T11:30:00.000Z" itemprop="datePublished">
+			2018-04-02
+		</time>
+	</p>
+
+	
+	<ul class="p-article-meta__tag">
+		
+		
+		<li><a href="/tags/bitbucket/">bitbucket</a></li>
+		
+		<li><a href="/tags/github/">github</a></li>
+		
+		<li><a href="/tags/circle-ci/">circle-ci</a></li>
+		
+	</ul>
+	
+	
+		<meta itemprop="url" content="https://esnetk6.com/2018/04/circle-ci-deployment/">
+	
+</footer>
+		
+		<div class="p-article__body" itemprop="articleBody">
+			<p>Circle CI 2.0を使って、GitHub or BitbucketからWebサイトを自動デプロイさせます。masterブランチは本番サーバーへ、developブランチはテストサーバーへ分けてデプロイさせるといったことも可能です。</p>
+<p>テストなんてどうでもいいから、とりあえず自動デプロイだけ実現してFTPクライアントでのアップロード作業から逃れたい！と思っていた自分のためのメモです。</p>
+<p>今回紹介する方法ではsshの使えるサーバーが必要です。<br>Circle CIからデータをあげたり削除したりするので、最初は失敗してもいい環境で試すのをおすすめします。自己責任でおねがいします。</p>
+<h2 id="Circle-CIの設定ファイルを作成してリポジトリにPush"><a href="#Circle-CIの設定ファイルを作成してリポジトリにPush" class="headerlink" title="Circle CIの設定ファイルを作成してリポジトリにPush"></a>Circle CIの設定ファイルを作成してリポジトリにPush</h2><p>リポジトリ直下に <code>.circleci/config.yml</code> を作ります。ファイルの中身は以下をコピペ。<br><strong>用意できたらGitHub or BitbucketのリポジトリにPushしておきます。</strong></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Environment variables</span></span><br><span class="line"><span class="comment"># - HOST_NAME</span></span><br><span class="line"><span class="comment"># - USER_NAME</span></span><br><span class="line"> </span><br><span class="line"><span class="symbol">version:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">jobs:</span></span><br><span class="line">  <span class="symbol">build:</span></span><br><span class="line">    <span class="symbol">docker:</span></span><br><span class="line">      - <span class="symbol">image:</span> circleci/<span class="symbol">php:</span><span class="number">7.1</span>-browsers</span><br><span class="line"> </span><br><span class="line">    <span class="symbol">steps:</span></span><br><span class="line">      - checkout</span><br><span class="line"> </span><br><span class="line">      - <span class="symbol">add_ssh_keys:</span></span><br><span class="line">          <span class="symbol">fingerprints:</span></span><br><span class="line">            - <span class="string">"xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"</span></span><br><span class="line"> </span><br><span class="line">      - <span class="symbol">run:</span></span><br><span class="line">          <span class="symbol">name:</span> Start ssh-keyscan</span><br><span class="line">          <span class="symbol">command:</span> |</span><br><span class="line">            ssh-keyscan <span class="variable">$&#123;</span>HOST_NAME&#125; &gt;&gt; ~<span class="regexp">/.ssh/known</span>_hosts</span><br><span class="line"> </span><br><span class="line">      - <span class="symbol">deploy:</span></span><br><span class="line">          <span class="symbol">name:</span> Start master deploy</span><br><span class="line">          <span class="symbol">command:</span> |</span><br><span class="line">            if [ <span class="string">"$&#123;CIRCLE_BRANCH&#125;"</span> == <span class="string">"master"</span> ]; <span class="keyword">then</span></span><br><span class="line">                rsync -av --delete --exclude=<span class="string">'.git'</span> --exclude=<span class="string">'.circleci'</span> ./ <span class="variable">$&#123;</span>USER_NAME&#125;@<span class="variable">$&#123;</span>HOST_NAME&#125;<span class="symbol">:/var/www/html/</span></span><br><span class="line">            fi</span><br></pre></td></tr></table></figure>
+<h2 id="Circle-CIにログイン"><a href="#Circle-CIにログイン" class="headerlink" title="Circle CIにログイン"></a>Circle CIにログイン</h2><p>Circle CIにGitHub or Bitbucketのアカウントでログインします。<br><a href="http://circleci.com/" target="_blank" rel="noopener">http://circleci.com/</a></p>
+<h2 id="リポジトリを選択する"><a href="#リポジトリを選択する" class="headerlink" title="リポジトリを選択する"></a>リポジトリを選択する</h2><p>左のProjectから “Add Project” をクリックするとリポジトリ一覧が表示されます。<br>さきほどconfig.ymlをPushしたリポジトリの “Setup Project” をクリック。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot1.png" alt=""></p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot2.png" alt=""></p>
+<h2 id="設定画面"><a href="#設定画面" class="headerlink" title="設定画面"></a>設定画面</h2><p>プロジェクトの初期設定画面が表示されますが、push済みのconfig.ymlで指定してあるので、ここでは何も押さずにスクロールしていって “Start building” をクリック。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot3.png" alt=""></p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot4.png" alt=""></p>
+<h2 id="1回目のビルド"><a href="#1回目のビルド" class="headerlink" title="1回目のビルド"></a>1回目のビルド</h2><p>ビルドが始まりますが1回目は失敗します。Failedとなって以下のように赤くなるはずです。</p>
+<p>環境変数等の設定画面に移動するため歯車アイコンをクリック。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot5.png" alt=""></p>
+<h2 id="設定画面-1"><a href="#設定画面-1" class="headerlink" title="設定画面"></a>設定画面</h2><p><img src="/2018/04/circle-ci-deployment/screenshot6.png" alt=""></p>
+<h2 id="秘密鍵の登録"><a href="#秘密鍵の登録" class="headerlink" title="秘密鍵の登録"></a>秘密鍵の登録</h2><p>Circle CIに秘密鍵を登録します。<br>メニューからPermissions &gt; SSH Permissions &gt; Add SSH keyをクリック。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot7.png" alt=""></p>
+<p>Hostname（例：example.com）と秘密鍵の中身を登録。最初と最後の行も含めてください。</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN RSA <span class="keyword">PRIVATE</span> <span class="keyword">KEY</span>-----</span><br><span class="line">（略）</span><br><span class="line">-----<span class="keyword">END</span> RSA <span class="keyword">PRIVATE</span> <span class="keyword">KEY</span>-----</span><br></pre></td></tr></table></figure>
+<p><img src="/2018/04/circle-ci-deployment/screenshot8.png" alt=""></p>
+<p>登録すると以下のようにFingerprintがセットされます。この値は後で使います。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot9.png" alt=""></p>
+<h2 id="環境変数の設定"><a href="#環境変数の設定" class="headerlink" title="環境変数の設定"></a>環境変数の設定</h2><p>今回用意したconfig.ymlでは2つの環境変数を使っています。<br>sshで接続する時のホスト名 <code>HOST_NAME</code> と、ユーザー名 <code>USER_NAME</code> です。<br>例として <a href="mailto:`ssh_user@example.com" target="_blank" rel="noopener">`ssh_user@example.com</a>` で接続するものとして進めます。</p>
+<p>環境変数はメニューからBuild Settings &gt; Environment Variables &gt; Add variableで登録。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot10.png" alt=""></p>
+<p>1つめはHOST_NAME。valueにホスト名を入力（例：example.com）。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot11.png" alt=""></p>
+<p>2つめはUSER_NAME。valueにユーザー名を入力（例：ssh_user）。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot12.png" alt=""></p>
+<p>登録すると以下のようになっているはずです。<br>Circle CI画面での設定はここまで。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot13.png" alt=""></p>
+<h2 id="config-ymlの編集"><a href="#config-ymlの編集" class="headerlink" title="config.ymlの編集"></a>config.ymlの編集</h2><p>エディターで <code>.circleci/config.yml</code> を開いて編集します。</p>
+<h3 id="Fingerprintの差し替え"><a href="#Fingerprintの差し替え" class="headerlink" title="Fingerprintの差し替え"></a>Fingerprintの差し替え</h3><p>先ほど秘密鍵を登録したあとに表示されたFingerprintをコピーして、16行目の <code>&quot;xx:xx:xx...&quot;</code> となっている箇所に貼り付けます。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">-</span> <span class="selector-tag">add_ssh_keys</span>:</span><br><span class="line">    <span class="selector-tag">fingerprints</span>:</span><br><span class="line">      <span class="selector-tag">-</span> "<span class="selector-tag">a2</span><span class="selector-pseudo">:6d</span><span class="selector-pseudo">:ec</span><span class="selector-pseudo">:7e</span><span class="selector-pseudo">:53</span><span class="selector-pseudo">:a5</span><span class="selector-pseudo">:4b</span><span class="selector-pseudo">:d7</span><span class="selector-pseudo">:72</span><span class="selector-pseudo">:78</span><span class="selector-pseudo">:0e</span><span class="selector-pseudo">:d1</span><span class="selector-pseudo">:d4</span><span class="selector-pseudo">:ee</span><span class="selector-pseudo">:b2</span><span class="selector-pseudo">:02"</span></span><br></pre></td></tr></table></figure>
+<h3 id="デプロイ先ディレクトリの変更"><a href="#デプロイ先ディレクトリの変更" class="headerlink" title="デプロイ先ディレクトリの変更"></a>デプロイ先ディレクトリの変更</h3><p>27行目のrsyncコマンドで、リポジトリの <code>./</code> ディレクトリ以下をアップロードさせます。<code>/</code> から始めると余計なものがアップされてしまうので注意。</p>
+<p>デプロイ先が <code>/var/www/html/</code> となっているのでディレクトリを変更してください。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -av --delete --exclude=<span class="string">'.git'</span> --exclude=<span class="string">'.circleci'</span> ./ <span class="variable">$&#123;</span>USER_NAME&#125;@<span class="variable">$&#123;</span>HOST_NAME&#125;<span class="symbol">:/var/www/html/</span></span><br></pre></td></tr></table></figure>
+<p><code>--delete</code> オプションを指定しているので、リポジトリのファイルを削除するとサーバー側の同じファイルが自動的に削除されてしまうのでご注意ください。<br><code>--exclude</code> オプションで、config.ymlと.gitフォルダ内がアップされないようにしています。</p>
+<h3 id="ポート番号の指定（サーバーによって必要）"><a href="#ポート番号の指定（サーバーによって必要）" class="headerlink" title="ポート番号の指定（サーバーによって必要）"></a>ポート番号の指定（サーバーによって必要）</h3><p>たとえばエックスサーバーのようにssh接続にポート番号（10022）が指定されている場合は、config.ymlでもポート番号を指定しておきます。</p>
+<h3 id="21行目"><a href="#21行目" class="headerlink" title="21行目"></a>21行目</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keyscan $&#123;HOST_NAME&#125; <span class="meta">&gt;&gt; </span>~<span class="regexp">/.ssh/known</span>_hosts</span><br></pre></td></tr></table></figure>
+<p>から</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keyscan -p <span class="number">10022</span> $&#123;HOST_NAME&#125; <span class="meta">&gt;&gt; </span>~<span class="regexp">/.ssh/known</span>_hosts</span><br></pre></td></tr></table></figure>
+<h3 id="27行目"><a href="#27行目" class="headerlink" title="27行目"></a>27行目</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -av --delete --exclude=<span class="string">'.git'</span> --exclude=<span class="string">'.circleci'</span> ./ <span class="variable">$&#123;</span>USER_NAME&#125;@<span class="variable">$&#123;</span>HOST_NAME&#125;<span class="symbol">:/var/www/html/</span></span><br></pre></td></tr></table></figure>
+<p>から</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rsync -av --delete --rsh=<span class="string">"ssh -p 10022"</span> --exclude=<span class="string">'.git'</span> --exclude=<span class="string">'.circleci'</span> ./ <span class="variable">$&#123;</span>USER_NAME&#125;@<span class="variable">$&#123;</span>HOST_NAME&#125;<span class="symbol">:/var/www/html/</span></span><br></pre></td></tr></table></figure>
+<h2 id="config-ymlをpush"><a href="#config-ymlをpush" class="headerlink" title="config.ymlをpush"></a>config.ymlをpush</h2><ul>
+<li>Fingerprintの差し替え</li>
+<li>デプロイ先ディレクトリの変更</li>
+<li>ポート番号の指定</li>
+</ul>
+<p>ができたら、config.ymlをpushします。<br>pushやプルリクのマージによってソースに変更があるとCircle CIが動くようになっているので、左上のBUILDSへ行くと新しいビルドがスタートしているはずです。</p>
+<p>1回目はFailedでしたが、Fixed（緑色）になったらビルド成功です。</p>
+<p><img src="/2018/04/circle-ci-deployment/screenshot14.png" alt=""></p>
+<p>正しくファイルがアップされたかどうか、ブラウザやFTPクライアント等で確認してください。<br>いらないファイルがアップされていたりしたら、rsyncの <code>--exclude</code> で除外するファイルやフォルダを指定します。</p>
+<p>config.yml以外のソースの変更をしてpushしてみたときに再度デプロイされるかどうかも確認します。正しく動いていたらおしまいです。</p>
+<h2 id="特定のブランチ以外はCircle-CIを動かさない"><a href="#特定のブランチ以外はCircle-CIを動かさない" class="headerlink" title="特定のブランチ以外はCircle CIを動かさない"></a>特定のブランチ以外はCircle CIを動かさない</h2><p>書いておくと余計なビルドがなくなります。</p>
+<p><a href="https://circleci.com/docs/2.0/configuration-reference/#branches" target="_blank" rel="noopener">https://circleci.com/docs/2.0/configuration-reference/#branches</a></p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">jobs:</span></span><br><span class="line"><span class="symbol">  build:</span></span><br><span class="line"><span class="symbol">    branches:</span></span><br><span class="line"><span class="symbol">      only:</span></span><br><span class="line">        - master</span><br></pre></td></tr></table></figure>
+<h2 id="ブランチごとにデプロイ先を変える"><a href="#ブランチごとにデプロイ先を変える" class="headerlink" title="ブランチごとにデプロイ先を変える"></a>ブランチごとにデプロイ先を変える</h2><p>masterは本番サーバーへ、developはテストサーバーへデプロイさせたい、みたいなとき。</p>
+<ul>
+<li>秘密鍵を追加した場合、fingerprintも増えます（行を追加すればOK）。</li>
+<li>デプロイ先が増えるので、環境変数も追加します。</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Environment variables</span></span><br><span class="line"><span class="comment"># - HOST_NAME</span></span><br><span class="line"><span class="comment"># - USER_NAME</span></span><br><span class="line"><span class="comment"># - HOST_NAME_DEV</span></span><br><span class="line"><span class="comment"># - USER_NAME_DEV</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">version:</span> <span class="number">2</span></span><br><span class="line"><span class="symbol">jobs:</span></span><br><span class="line">  <span class="symbol">build:</span></span><br><span class="line">    <span class="symbol">docker:</span></span><br><span class="line">      - <span class="symbol">image:</span> circleci/<span class="symbol">php:</span><span class="number">7.1</span>-browsers</span><br><span class="line"> </span><br><span class="line">    <span class="symbol">branches:</span></span><br><span class="line">      <span class="symbol">only:</span></span><br><span class="line">        - master</span><br><span class="line">        - develop</span><br><span class="line"> </span><br><span class="line">    <span class="symbol">steps:</span></span><br><span class="line">      - checkout</span><br><span class="line"> </span><br><span class="line">      - <span class="symbol">add_ssh_keys:</span></span><br><span class="line">          <span class="symbol">fingerprints:</span></span><br><span class="line">            - <span class="string">"xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"</span></span><br><span class="line">            - <span class="string">"yy:yy:yy:yy:yy:yy:yy:yy:yy:yy:yy:yy:yy:yy:yy:yy"</span> <span class="comment">#追加</span></span><br><span class="line"> </span><br><span class="line">      - <span class="symbol">run:</span></span><br><span class="line">          <span class="symbol">name:</span> Start ssh-keyscan</span><br><span class="line">          <span class="symbol">command:</span> |</span><br><span class="line">            ssh-keyscan <span class="variable">$&#123;</span>HOST_NAME&#125; &gt;&gt; ~<span class="regexp">/.ssh/known</span>_hosts</span><br><span class="line">            ssh-keyscan <span class="variable">$&#123;</span>HOST_NAME_DEV&#125; &gt;&gt; ~<span class="regexp">/.ssh/known</span>_hosts <span class="comment">#追加</span></span><br><span class="line"> </span><br><span class="line">      - <span class="symbol">deploy:</span></span><br><span class="line">          <span class="symbol">name:</span> Start master deploy</span><br><span class="line">          <span class="symbol">command:</span> |</span><br><span class="line">            if [ <span class="string">"$&#123;CIRCLE_BRANCH&#125;"</span> == <span class="string">"master"</span> ]; <span class="keyword">then</span></span><br><span class="line">                rsync -av --delete --exclude=<span class="string">'.git'</span> --exclude=<span class="string">'.circleci'</span> ./ <span class="variable">$&#123;</span>USER_NAME&#125;@<span class="variable">$&#123;</span>HOST_NAME&#125;<span class="symbol">:/var/www/html/</span></span><br><span class="line">            fi</span><br><span class="line"> </span><br><span class="line">      <span class="comment"># 追加</span></span><br><span class="line">      - <span class="symbol">deploy:</span></span><br><span class="line">          <span class="symbol">name:</span> Start develop deploy</span><br><span class="line">          <span class="symbol">command:</span> |</span><br><span class="line">            if [ <span class="string">"$&#123;CIRCLE_BRANCH&#125;"</span> == <span class="string">"develop"</span> ]; <span class="keyword">then</span></span><br><span class="line">                rsync -av --delete --exclude=<span class="string">'.git'</span> --exclude=<span class="string">'.circleci'</span> ./ <span class="variable">$&#123;</span>USER_NAME_DEV&#125;@<span class="variable">$&#123;</span>HOST_NAME_DEV&#125;<span class="symbol">:/var/www/html/</span></span><br><span class="line">            fi</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>“Are you sure you want to continue connecting (yes/no)?” をきかれてビルドがストップしないようにするためにどうすればいいか調べたところ、以下の記事が参考になりました。</p>
+<ul>
+<li><a href="https://qiita.com/pinkumohikan/items/b6fa4233068e7e98e22d" target="_blank" rel="noopener">初回SSH接続時の対話的Fingerprint確認フローをssh-keyscanでスキップする - Qiita</a></li>
+</ul>
+
+		</div>
+	</article>
+	<nav class="c-pagination" role="navigation">
+	<ul class="c-pagination-list">
+		
+		
+		<li class="c-pagination-list__item c-pagination-list__item--next">
+			<span>Older Entry</span>
+			<a class="older-posts" href="/2018/02/acm-s3-https/">
+			CloudFront + ACMでブログをHTTPS化した
+		</a></li>
+		
+	</ul>
+</nav>
+</main>
+
+<footer role="contentinfo" class="p-footer">
+	<div class="p-footer__links">
+		<ul>
+			<li><a href="/" rel="home">Home</a></li>
+			
+			
+			<li><a href="/atom.xml">RSS</a></li>
+			
+		</ul>
+	</div>
+</footer>
+</div>
+</body>
+</html>

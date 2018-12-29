@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html lang="ja" itemscope itemtype="http://schema.org/WebPage">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title itemprop="name">WP-CLIで親を指定して固定ページを作る - esnetk6.com</title>
+	
+	<meta property="og:title" content="WP-CLIで親を指定して固定ページを作る">
+	
+	
+	
+	<meta name="description" content="WP-CLIから固定ページを生成したいときに、親子関係も一緒に設定するためのメモです。">
+	
+	
+	<meta property="og:site_name" content="esnetk6.com">
+	<meta property="og:locale" content="ja_JP">
+	
+	<meta property="og:url" content="https://esnetk6.com/2017/04/wp-cli-create-sub-page/">
+	<meta itemprop="url" content="https://esnetk6.com/2017/04/wp-cli-create-sub-page/">
+	<link rel="canonical" href="https://esnetk6.com/2017/04/wp-cli-create-sub-page/">
+	
+	
+	<meta property="og:type" content="article">
+	
+	
+	
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="/atom.xml">
+	
+	<link rel="stylesheet" href="/css/style.min.css">
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-KQS6BKM');</script>
+	<!-- End Google Tag Manager -->
+</head>
+
+
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="l-container">
+<header role="banner" class="p-header">
+	<p class="p-header__logo">
+		<a href="/" rel="home">esnetk6.com</a>
+	</p>
+</header>
+
+<main role="main">
+	<article class="p-article" itemscope="" itemtype="http://schema.org/Article">
+		<h1 class="p-article__title" itemprop="headline name">WP-CLIで親を指定して固定ページを作る</h1>
+		
+			<footer class="p-article-meta">
+
+	<p class="p-article-meta__date p-meta-date">
+		<time datetime="2017-04-29T12:30:00.000Z" itemprop="datePublished">
+			2017-04-29
+		</time>
+	</p>
+
+	
+	<ul class="p-article-meta__tag">
+		
+		
+		<li><a href="/tags/wordpress/">wordpress</a></li>
+		
+		<li><a href="/tags/wp-cli/">wp-cli</a></li>
+		
+	</ul>
+	
+	
+		<meta itemprop="url" content="https://esnetk6.com/2017/04/wp-cli-create-sub-page/">
+	
+</footer>
+		
+		<div class="p-article__body" itemprop="articleBody">
+			<p><img src="/2017/04/wp-cli-create-sub-page/screenshot1.png" alt=""></p>
+<p>WP-CLIから固定ページを生成したいときに、親子関係も一緒に設定するためのメモです。</p>
+<h2 id="WP-CLIで固定ページを作る"><a href="#WP-CLIで固定ページを作る" class="headerlink" title="WP-CLIで固定ページを作る"></a>WP-CLIで固定ページを作る</h2><p>基本形から。<br>記事の投稿はWP-CLIの <a href="http://wp-cli.org/commands/post/create/" target="_blank" rel="noopener">wp post create</a> コマンドで行ないます。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wp post create --post_type=page --post_status=publish --post_title=<span class="string">"Company"</span> --post_name=<span class="string">"company"</span></span><br></pre></td></tr></table></figure>
+<p><code>--post_type=page</code> は固定ページとして作るための指定。<br><code>--post_status=publish</code> は公開済みの記事として作るための指定。<br><code>--post_title=&quot;Company&quot;</code> は記事のタイトル。<br><code>--post_name=&quot;company&quot;</code> で記事作成時のパーマリンクの指定もできます。</p>
+<p><img src="/2017/04/wp-cli-create-sub-page/screenshot2.png" alt=""></p>
+<p>当然、このコマンドでは記事の親は指定されていません。<br>※パーマリンク設定によっては <code>--post_name</code> で指定した文字列は表示されませんが、情報としては保存されているはずです。</p>
+<h2 id="親を指定する"><a href="#親を指定する" class="headerlink" title="親を指定する"></a>親を指定する</h2><p>前回のコマンドに加えて <code>--post_parent=ID</code> を指定すると、このIDに該当するページを親として子ページを作成できます。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wp post create --post_parent=20 --post_type=page ...</span><br></pre></td></tr></table></figure>
+<h3 id="ページのIDをスラッグから取得する"><a href="#ページのIDをスラッグから取得する" class="headerlink" title="ページのIDをスラッグから取得する"></a>ページのIDをスラッグから取得する</h3><p>いちいちIDを調べて指定するのは面倒なので、ページのスラッグからIDを取得します。<br>今回は “company” の下に新たに子ページを作成したいと思います。</p>
+<p>ページのIDを取得するには <a href="http://wp-cli.org/commands/post/list/" target="_blank" rel="noopener">wp post list</a> を使います。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wp post list --field=ID --post_type=page --name=<span class="string">"company"</span></span><br></pre></td></tr></table></figure>
+<p><code>--post_name</code> ではなく <code>--name</code> でスラッグを指定しないと正しく取得できませんでした。</p>
+<h2 id="親を指定して固定ページを作成"><a href="#親を指定して固定ページを作成" class="headerlink" title="親を指定して固定ページを作成"></a>親を指定して固定ページを作成</h2><p>オプションの中でさらに <code>wp</code> コマンドを使用する場合は <code>$(wp ~ )</code> とすればいいので、最終的に以下のようになります。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wp post create --post_type=page --post_status=publish --post_title=<span class="string">"Message"</span> --post_name=<span class="string">"message"</span> --post_parent=$(wp post list --post_type=page --field=ID --name=<span class="string">"company"</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/2017/04/wp-cli-create-sub-page/screenshot3.png" alt=""></p>
+<p>ちゃんと子ページとして作成できました。</p>
+<p>ターミナルへのコピペがうまくいかなくなることが考えられるため、ここまでのコマンドには日本語が入ってませんが、WP-CLIのオプションに日本語が使えないとかいうわけではありません。普通に使えます。</p>
+<p>一つのファイルにまとめてシェルスクリプトを実行させると一発で固定ページを作成できますね。</p>
+<figure class="highlight sh"><figcaption><span>post.sh</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">wp post create --post_title=<span class="string">"業務内容"</span> --post_name=<span class="string">"business"</span> --post_type=page --post_status=publish</span><br><span class="line">wp post create --post_title=<span class="string">"お問い合わせ"</span> --post_name=<span class="string">"contact"</span> --post_type=page --post_status=publish</span><br><span class="line">wp post create --post_title=<span class="string">"採用情報"</span> --post_name=<span class="string">"recruit"</span> --post_type=page --post_status=publish</span><br><span class="line">wp post create --post_title=<span class="string">"会社概要"</span> --post_name=<span class="string">"company"</span> --post_type=page --post_status=publish</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 会社概要（company）の下に作成</span></span><br><span class="line">wp post create --post_title=<span class="string">"ご挨拶"</span> --post_name=<span class="string">"message"</span> --post_type=page --post_status=publish --post_parent=$(wp post list --post_type=page --field=ID --name=<span class="string">"company"</span>)</span><br><span class="line">wp post create --post_title=<span class="string">"アクセス"</span> --post_name=<span class="string">"access"</span> --post_type=page --post_status=publish --post_parent=$(wp post list --post_type=page --field=ID --name=<span class="string">"company"</span>)</span><br><span class="line">wp post create --post_title=<span class="string">"沿革"</span> --post_name=<span class="string">"history"</span> --post_type=page --post_status=publish --post_parent=$(wp post list --post_type=page --field=ID --name=<span class="string">"company"</span>)</span><br></pre></td></tr></table></figure>
+
+		</div>
+	</article>
+	<nav class="c-pagination" role="navigation">
+	<ul class="c-pagination-list">
+		
+		<li class="c-pagination-list__item c-pagination-list__item--prev">
+			<span>Newer Entry</span>
+			<a href="/2017/08/wp-cli-set-page-template/">
+			WP-CLIで固定ページのテンプレートを指定する
+		</a></li>
+		
+		
+		<li class="c-pagination-list__item c-pagination-list__item--next">
+			<span>Older Entry</span>
+			<a class="older-posts" href="/2017/04/start-blog/">
+			Hexoでブログをスタート
+		</a></li>
+		
+	</ul>
+</nav>
+</main>
+
+<footer role="contentinfo" class="p-footer">
+	<div class="p-footer__links">
+		<ul>
+			<li><a href="/" rel="home">Home</a></li>
+			
+			
+			<li><a href="/atom.xml">RSS</a></li>
+			
+		</ul>
+	</div>
+</footer>
+</div>
+</body>
+</html>

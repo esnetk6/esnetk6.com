@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html lang="ja" itemscope itemtype="http://schema.org/WebPage">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title itemprop="name">BitbucketからFTPサーバーにデプロイ - esnetk6.com</title>
+	
+	<meta property="og:title" content="BitbucketからFTPサーバーにデプロイ">
+	
+	
+	
+	<meta name="description" content="BitbucketからFTPサーバーにデプロイする方法を探すと「Bitbucket Sync」を使っている情報が多い気がしますが、現在はこのスクリプトじゃなく「Pipelines」を使うようにとの案内があるので、その手順をメモ。">
+	
+	
+	<meta property="og:site_name" content="esnetk6.com">
+	<meta property="og:locale" content="ja_JP">
+	
+	<meta property="og:url" content="https://esnetk6.com/2017/10/bitbucket-pipelines-ftp-deployment/">
+	<meta itemprop="url" content="https://esnetk6.com/2017/10/bitbucket-pipelines-ftp-deployment/">
+	<link rel="canonical" href="https://esnetk6.com/2017/10/bitbucket-pipelines-ftp-deployment/">
+	
+	
+	<meta property="og:type" content="article">
+	
+	
+	
+	<link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="/atom.xml">
+	
+	<link rel="stylesheet" href="/css/style.min.css">
+	<!-- Google Tag Manager -->
+	<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-KQS6BKM');</script>
+	<!-- End Google Tag Manager -->
+</head>
+
+
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="l-container">
+<header role="banner" class="p-header">
+	<p class="p-header__logo">
+		<a href="/" rel="home">esnetk6.com</a>
+	</p>
+</header>
+
+<main role="main">
+	<article class="p-article" itemscope="" itemtype="http://schema.org/Article">
+		<h1 class="p-article__title" itemprop="headline name">BitbucketからFTPサーバーにデプロイ</h1>
+		
+			<footer class="p-article-meta">
+
+	<p class="p-article-meta__date p-meta-date">
+		<time datetime="2017-10-10T15:00:00.000Z" itemprop="datePublished">
+			2017-10-11
+		</time>
+	</p>
+
+	
+	<ul class="p-article-meta__tag">
+		
+		
+		<li><a href="/tags/bitbucket/">bitbucket</a></li>
+		
+	</ul>
+	
+	
+		<meta itemprop="url" content="https://esnetk6.com/2017/10/bitbucket-pipelines-ftp-deployment/">
+	
+</footer>
+		
+		<div class="p-article__body" itemprop="articleBody">
+			<p>BitbucketからFTPサーバーにデプロイする方法を探すと「<a href="https://github.com/alixandru/bitbucket-sync/" target="_blank" rel="noopener">Bitbucket Sync</a>」を使っている情報が多い気がしますが、現在はこのスクリプトじゃなく<a href="https://ja.atlassian.com/software/bitbucket/features/pipelines" target="_blank" rel="noopener">Pipelines</a>を使うようにとの案内があるので、その手順をメモ。</p>
+<h2 id="使用したサーバー"><a href="#使用したサーバー" class="headerlink" title="使用したサーバー"></a>使用したサーバー</h2><p>お名前.com レンタルサーバー（SD-11プラン）で確認済。<br>さくらのレンタルサーバー（スタンダードプラン）でも実行しましたが、この方法ではデプロイできませんでした（2017年10月現在）。</p>
+<h3 id="注意：デプロイ先のディレクトリを空の状態にしておくこと"><a href="#注意：デプロイ先のディレクトリを空の状態にしておくこと" class="headerlink" title="注意：デプロイ先のディレクトリを空の状態にしておくこと"></a>注意：デプロイ先のディレクトリを空の状態にしておくこと</h3><p>デプロイ対象のディレクトリの中が空になっていないと失敗します。ファイルを削除しておいてください。</p>
+<h2 id="リポジトリの用意"><a href="#リポジトリの用意" class="headerlink" title="リポジトリの用意"></a>リポジトリの用意</h2><p>今回は新規のリポジトリを作成しました。</p>
+<h2 id="Pipelinesを有効にする"><a href="#Pipelinesを有効にする" class="headerlink" title="Pipelinesを有効にする"></a>Pipelinesを有効にする</h2><p>リポジトリの「設定」→「PIPELINES」→「Settings」→「Enable Pipelines」 で有効にします。<br>続いて「Configure bitbucket-pipelines.yml」をクリックします。</p>
+<p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot1.png" alt=""></p>
+<h2 id="bitbucket-pipelines-ymlの作成"><a href="#bitbucket-pipelines-ymlの作成" class="headerlink" title="bitbucket-pipelines.ymlの作成"></a>bitbucket-pipelines.ymlの作成</h2><p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot2.png" alt=""></p>
+<p>Pipelinesの設定画面に飛びます。<br>「Choose a language template」のいずれかの言語をクリックするとymlの編集画面が表示されるので<a href="https://github.com/alixandru/bitbucket-sync/" target="_blank" rel="noopener">Bitbucket Sync</a>の概要にあるコードを貼り付けるのですが、現時点ではインデントに間違いがあるらしくエラーが出ます。以下のコードに直してください。</p>
+<p>ついでに11行目の <code>ftp://ftp.change-this.ro/</code> を自分のデプロイ先に置き換えます。<br>例： <code>ftp://ftp**.gmoserver.jp/deploy-test/</code></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">image: samueldebruyn/debian-git</span><br><span class="line"> </span><br><span class="line">pipeline<span class="variable">s:</span></span><br><span class="line">  defaul<span class="variable">t:</span></span><br><span class="line">    - step:</span><br><span class="line">        <span class="keyword">scrip</span><span class="variable">t:</span></span><br><span class="line">          - <span class="keyword">echo</span> <span class="string">"Pipeline Init"</span></span><br><span class="line">          - apt-<span class="built_in">get</span> <span class="keyword">update</span></span><br><span class="line">          - apt-<span class="built_in">get</span> -qq install git-ftp</span><br><span class="line">          - <span class="keyword">echo</span> <span class="string">"Initiating Push"</span></span><br><span class="line">          - git ftp init --user $FTP_USERNAME --passwd $FTP_PASSWORD ftp://ftp.<span class="keyword">change</span>-this.ro/</span><br><span class="line">          - <span class="keyword">echo</span> <span class="string">"Done Pushing"</span></span><br></pre></td></tr></table></figure>
+<p>編集が終わったら「Commit file」をクリックします。Pipelinesが動きますが、1回目はコケます。</p>
+<p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot3.png" alt=""></p>
+<h2 id="環境変数の設定"><a href="#環境変数の設定" class="headerlink" title="環境変数の設定"></a>環境変数の設定</h2><p>リポジトリの「設定」→「PIPELINES」→「Environment variables」画面に移ります。<br><code>FTP_USER</code> と <code>FTP_PASSWORD</code> という変数を用意して、アカウント、パスワードを入力します。</p>
+<p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot4.png" alt=""></p>
+<h2 id="再実行"><a href="#再実行" class="headerlink" title="再実行"></a>再実行</h2><p>リポジトリの「Pipelines」メニューから、行なわれた処理を選択すると詳細画面に移ります。<br>タイトル下のFailedとなっているエリアの右側に「Rerun」という項目があるのでクリック。</p>
+<p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot5.png" alt=""></p>
+<h2 id="デプロイ成功"><a href="#デプロイ成功" class="headerlink" title="デプロイ成功"></a>デプロイ成功</h2><p>FailedがSuccessfulになればデプロイ成功。<br>成功しなかった場合、対象ディレクトリが空になっていなかったか、そもそもお使いのサーバーがこの方法に対応していない可能性があります。</p>
+<p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot6.png" alt=""></p>
+<p>デプロイ先をFTPクライアントで見てみると以下のとおり。今回は新規のリポジトリなのでファイルがこれしかありません。</p>
+<p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot7.png" alt=""></p>
+<h2 id="bitbucket-pipelines-ymlの編集"><a href="#bitbucket-pipelines-ymlの編集" class="headerlink" title="bitbucket-pipelines.ymlの編集"></a>bitbucket-pipelines.ymlの編集</h2><p>初回のデプロイが成功したら、再度bitbucket-pipelines.ymlを編集し、11行目 <code>git ftp init</code> を <code>git ftp push</code> に書き換えます。</p>
+<p>下の例では「ソース」からオンライン上で編集しています。</p>
+<p><img src="/2017/10/bitbucket-pipelines-ftp-deployment/screenshot8.png" alt=""></p>
+<p>編集後、再度Pipelinesの処理が行われます。<br>以降、ソースが更新されるたびに自動デプロイが行われます。</p>
+
+		</div>
+	</article>
+	<nav class="c-pagination" role="navigation">
+	<ul class="c-pagination-list">
+		
+		<li class="c-pagination-list__item c-pagination-list__item--prev">
+			<span>Newer Entry</span>
+			<a href="/2018/02/acm-s3-https/">
+			CloudFront + ACMでブログをHTTPS化した
+		</a></li>
+		
+		
+		<li class="c-pagination-list__item c-pagination-list__item--next">
+			<span>Older Entry</span>
+			<a class="older-posts" href="/2017/08/wp-cli-run-command-on-multisite/">
+			WP-CLIをマルチサイト上の別ブログで使う
+		</a></li>
+		
+	</ul>
+</nav>
+</main>
+
+<footer role="contentinfo" class="p-footer">
+	<div class="p-footer__links">
+		<ul>
+			<li><a href="/" rel="home">Home</a></li>
+			
+			
+			<li><a href="/atom.xml">RSS</a></li>
+			
+		</ul>
+	</div>
+</footer>
+</div>
+</body>
+</html>
