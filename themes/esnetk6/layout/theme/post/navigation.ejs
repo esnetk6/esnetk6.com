@@ -1,0 +1,18 @@
+<nav class="c-pagination" role="navigation">
+	<ul class="c-pagination-list">
+		<% if (page.prev) { %>
+		<li class="c-pagination-list__item c-pagination-list__item--prev">
+			<span>Newer Entry</span>
+			<a href="<%- url_for(page.prev.path) %>">
+			<%- page.prev.title %>
+		</a></li>
+		<% } %>
+		<% if (page.next) { %>
+		<li class="c-pagination-list__item c-pagination-list__item--next">
+			<span>Older Entry</span>
+			<a class="older-posts" href="<%- url_for(page.next.path) %>">
+			<%- page.next.title %>
+		</a></li>
+		<% } %>
+	</ul>
+</nav>

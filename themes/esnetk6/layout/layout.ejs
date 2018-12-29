@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<% if ( is_home() ) { %>
+<html lang="ja" itemscope itemtype="http://schema.org/WebSite">
+<% } else { %>
+<html lang="ja" itemscope itemtype="http://schema.org/WebPage">
+<% } %>
+<%- partial('theme/head') %>
+<% if (typeof page.title == 'undefined') { %>
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<% } else { %>
+<body id="top">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KQS6BKM" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<% } %>
+<div class="l-container">
+<%- partial('theme/header') %>
+<%- body %>
+<%- partial('theme/footer') %>
+</div>
+</body>
+</html>

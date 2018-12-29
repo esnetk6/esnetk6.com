@@ -1,0 +1,13 @@
+<% permalink = config.url + config.root + post.path %>
+<main role="main">
+	<article class="p-article" itemscope itemtype="http://schema.org/Article">
+		<h1 class="p-article__title" itemprop="headline name"><%- post.title %></h1>
+		<% if ( page.layout != 'page' ) { %>
+			<%- partial('post/meta') %>
+		<% } %>
+		<div class="p-article__body" itemprop="articleBody">
+			<%- post.content %>
+		</div>
+	</article>
+	<%- partial('post/navigation') %>
+</main>

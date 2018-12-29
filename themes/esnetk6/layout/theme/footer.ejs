@@ -1,0 +1,11 @@
+<footer role="contentinfo" class="p-footer">
+	<div class="p-footer__links">
+		<ul>
+			<li><a href="<%- config.root %>" rel="home">Home</a></li>
+			<% // <li><a href="//twitter.com/esnetk6" target="_blank">Twitter</a></li> %>
+			<% if (config.rss || config.feed) {  %>
+			<li><a href="<%= (config.rss || config.feed.path) %>">RSS</a></li>
+			<% } %>
+		</ul>
+	</div>
+</footer>
