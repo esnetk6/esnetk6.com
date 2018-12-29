@@ -6,7 +6,7 @@
   <link href="//atom.xml" rel="self"/>
   
   <link href="https://esnetk6.com/"/>
-  <updated>2018-12-21T09:22:18.702Z</updated>
+  <updated>2018-12-29T15:37:44.168Z</updated>
   <id>https://esnetk6.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>ブログをS3からGitHub Pagesに移した</title>
+    <link href="https://esnetk6.com/2018/12/github-pages-blog/"/>
+    <id>https://esnetk6.com/2018/12/github-pages-blog/</id>
+    <published>2018-12-29T15:30:00.000Z</published>
+    <updated>2018-12-29T15:37:44.168Z</updated>
+    
+    <content type="html"><![CDATA[<p>Amazon S3を使っていたのですがGitHub Pagesにしました。</p><p>AWSありがとう。<br>諸事情により移行することになりましたが速いし安いし最高でした。</p><h2 id="GitHub-Pagesに独自ドメインを適用する"><a href="#GitHub-Pagesに独自ドメインを適用する" class="headerlink" title="GitHub Pagesに独自ドメインを適用する"></a>GitHub Pagesに独自ドメインを適用する</h2><p><a href="https://help.github.com/articles/setting-up-an-apex-domain/" target="_blank" rel="noopener">https://help.github.com/articles/setting-up-an-apex-domain/</a></p><p>Aレコード</p><ul><li>185.199.108.153</li><li>185.199.109.153</li><li>185.199.110.153</li><li>185.199.111.153</li></ul><h3 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h3><p>いつの間にかGitHub Pagesが公式で独自ドメインのHTTPS配信をサポートするようになっていました。リポジトリの設定からEnforce HTTPSにチェックを入れるだけでした。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;Amazon S3を使っていたのですがGitHub Pagesにしました。&lt;/p&gt;
+&lt;p&gt;AWSありがとう。&lt;br&gt;諸事情により移行することになりましたが速いし安いし最高でした。&lt;/p&gt;
+&lt;h2 id=&quot;GitHub-Pagesに独自ドメインを適用する&quot;&gt;&lt;a href=&quot;
+      
+    
+    </summary>
+    
+    
+      <category term="github" scheme="https://esnetk6.com/tags/github/"/>
+    
+  </entry>
   
   <entry>
     <title>Circle CIでwebサイトを自動デプロイ</title>
